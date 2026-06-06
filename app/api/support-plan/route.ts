@@ -5,7 +5,7 @@ import {
   getSupportPlan,
   type SupportPlan,
 } from "@/lib/manus/support-plan";
-import { detectCrisisLanguage } from "@/lib/crisis/detect";
+import { hasCrisisInAnswers } from "@/lib/crisis/detect";
 
 function isAnswersRecord(value: unknown): value is Record<string, string> {
   if (typeof value !== "object" || value === null) {
@@ -13,10 +13,6 @@ function isAnswersRecord(value: unknown): value is Record<string, string> {
   }
 
   return Object.values(value).every((answer) => typeof answer === "string");
-}
-
-function hasCrisisInAnswers(answers: Record<string, string>): boolean {
-  return Object.values(answers).some((answer) => detectCrisisLanguage(answer));
 }
 
 export async function POST(request: Request) {

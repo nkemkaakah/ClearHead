@@ -14,3 +14,7 @@ export function detectCrisisLanguage(text: string): boolean {
 
   return CRISIS_PATTERNS.some((pattern) => pattern.test(normalised));
 }
+
+export function hasCrisisInAnswers(answers: Record<string, string>): boolean {
+  return Object.values(answers).some((answer) => detectCrisisLanguage(answer));
+}

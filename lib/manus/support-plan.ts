@@ -1,4 +1,4 @@
-import { detectCrisisLanguage } from "@/lib/crisis/detect";
+import { hasCrisisInAnswers } from "@/lib/crisis/detect";
 import { SUPPORT_CHECK_QUESTIONS } from "@/lib/check/questions";
 import { createTask, pollUntilStopped, type ManusEvent } from "./client";
 
@@ -43,10 +43,6 @@ export function createUrgentSupportPlan(): SupportPlan {
     message: "",
     safety_flag: true,
   };
-}
-
-function hasCrisisInAnswers(answers: Record<string, string>): boolean {
-  return Object.values(answers).some((answer) => detectCrisisLanguage(answer));
 }
 
 function buildPrompt(answers: Record<string, string>): string {

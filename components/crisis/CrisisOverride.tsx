@@ -18,15 +18,26 @@ export function CrisisOverride() {
         >
           {CRISIS_OVERRIDE_HEADLINE}
         </h1>
+        <p className="mt-2 text-sm text-slate-600">
+          These are free, confidential, and available right now.
+        </p>
 
-        <ul className="mt-6 space-y-4">
+        <ul className="mt-6 space-y-3">
           {CRISIS_RESOURCES.map((resource) => (
             <li key={resource.id}>
               <a
                 href={resource.href}
-                className="block rounded-lg border border-slate-200 p-4 font-medium text-slate-900 transition-colors hover:bg-slate-50"
+                className="flex items-center gap-4 rounded-xl border-2 border-slate-200 p-4 transition-colors hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
               >
-                {resource.icon} {resource.contact} — {resource.label}
+                <span className="text-2xl">{resource.icon}</span>
+                <span>
+                  <span className="block text-lg font-bold text-slate-900">
+                    {resource.contact}
+                  </span>
+                  <span className="text-sm text-slate-600">
+                    {resource.label}
+                  </span>
+                </span>
               </a>
             </li>
           ))}

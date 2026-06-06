@@ -75,31 +75,6 @@ function sh(command: string): string {
   }).trim();
 }
 
-function debugLog(
-  hypothesisId: string,
-  location: string,
-  message: string,
-  data: Record<string, unknown>,
-): void {
-  // #region agent log
-  fetch("http://127.0.0.1:7427/ingest/e5334926-ddeb-4b24-b70c-161f34280cd4", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "1bf094",
-    },
-    body: JSON.stringify({
-      sessionId: "1bf094",
-      hypothesisId,
-      location,
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-}
-
 function getRepoChangedFiles(): {
   all: string[];
   diffTracked: string[];
@@ -198,15 +173,6 @@ function finalizeStepVerification(
 ): Verdict {
   const repoFiles = getRepoChangedFiles();
   const allChanged = repoFiles.all;
-  // #region agent log
-  debugLog("H1", "clearhead-builder.ts:evidence", "repo file evidence snapshot", {
-    diffTrackedCount: repoFiles.diffTracked.length,
-    stagedCount: repoFiles.staged.length,
-    untrackedCount: repoFiles.untracked.length,
-    allChangedCount: allChanged.length,
-    sampleUntracked: repoFiles.untracked.slice(0, 5),
-  });
-  // #endregion
 
   const testCommand = step.test_command ?? state.workflow.default_test_command;
   const test = runTest(testCommand);
@@ -217,18 +183,6 @@ function finalizeStepVerification(
   const testsOk = !step.required_evidence.tests_must_pass || test.exitCode === 0;
   const verifierPass = testsOk && fileEvidenceOk && allChanged.length > 0;
   const verdict: Verdict = verifierPass ? "pass" : "fail";
-
-  // #region agent log
-  debugLog("H1", "clearhead-builder.ts:verdict-inputs", "verification gate inputs", {
-    stepId: step.id,
-    fileEvidenceOk,
-    testsOk,
-    testExitCode: test.exitCode,
-    verifierPass,
-    allChangedCount: allChanged.length,
-    verifyOnly,
-  });
-  // #endregion
 
   state.agent_id = options.agentId;
   state.last_run = {

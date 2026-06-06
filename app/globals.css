@@ -3,10 +3,21 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --accent: #2d5a4a;
+  --accent-hover: #1e3f34;
+  --accent-muted: #e8f0ed;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --urgency-low-bg: #fefce8;
+  --urgency-low-border: #fde047;
+  --urgency-moderate-bg: #fff7ed;
+  --urgency-moderate-border: #fb923c;
+  --radius-card: 0.75rem;
+  --shadow-sm: 0 1px 3px rgb(15 23 42 / 0.08), 0 1px 2px rgb(15 23 42 / 0.04);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CrisisFooter } from "@/components/CrisisFooter";
+import { Button } from "@/components/ui/Button";
+import { PageShell } from "@/components/ui/PageShell";
 import { SESSION_STARTED_KEY } from "@/lib/session/keys";
 
 export function WarmEntry() {
@@ -13,32 +14,35 @@ export function WarmEntry() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex flex-1 flex-col items-center justify-center px-6 pb-24">
-        <div className="max-w-lg text-center">
-          <p className="text-sm font-medium tracking-wide text-slate-500">
-            ClearHead
-          </p>
-          <h1 className="mt-4 text-2xl font-semibold leading-snug text-slate-900 sm:text-3xl">
+    <PageShell className="bg-gradient-to-b from-slate-50 via-white to-slate-50">
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <div className="w-full max-w-sm">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold tracking-tight leading-[1.15] text-slate-900 sm:text-4xl">
             Hey. Whatever&apos;s going on, you&apos;re in the right place.
           </h1>
-          <p className="mt-4 text-lg leading-relaxed text-slate-600">
-            Let&apos;s figure out together what support you need.
+          <p className="mt-4 text-base leading-relaxed text-slate-600 max-w-sm">
+            In a few minutes, you&apos;ll have a clear next step, a message
+            ready to send tonight, and a check-in so you&apos;re not alone.
           </p>
-          <p className="mt-6 text-sm text-slate-500">
-            A student support navigator to help you find your next step — no
-            account needed.
-          </p>
-          <button
-            type="button"
+
+          <Button
+            variant="primary"
+            size="lg"
             onClick={handleStart}
-            className="mt-8 rounded-full bg-slate-900 px-8 py-3 text-base font-medium text-white transition-colors hover:bg-slate-800"
+            className="mt-8 w-full sm:w-auto"
           >
             Let&apos;s start
-          </button>
+          </Button>
+
+          <p className="mt-5 flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs text-slate-400">
+            <span>No account</span>
+            <span>·</span>
+            <span>~3 minutes</span>
+            <span>·</span>
+            <span>Stays on this device</span>
+          </p>
         </div>
-      </main>
-      <CrisisFooter />
-    </div>
+      </div>
+    </PageShell>
   );
 }

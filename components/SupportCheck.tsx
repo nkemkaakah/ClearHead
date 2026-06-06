@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CrisisFooter } from "@/components/CrisisFooter";
+import { Button } from "@/components/ui/Button";
+import { PageShell } from "@/components/ui/PageShell";
 import { useCrisis } from "@/components/crisis/CrisisProvider";
 import {
   SUPPORT_CHECK_QUESTIONS,
@@ -13,17 +14,17 @@ import {
   SESSION_STARTED_KEY,
 } from "@/lib/session/keys";
 
-function ProgressBar({ currentIndex }: { currentIndex: number }) {
-  const progress = (currentIndex / TOTAL_QUESTIONS) * 100;
+function QuestionProgress({ currentIndex }: { currentIndex: number }) {
+  const progress = ((currentIndex + 1) / TOTAL_QUESTIONS) * 100;
 
   return (
-    <div className="w-full">
-      <p className="mb-2 text-sm text-slate-600">
-        Support check — step {currentIndex + 1} of {TOTAL_QUESTIONS}
+    <div className="w-full max-w-lg">
+      <p className="mb-2 text-xs text-slate-400">
+        Question {currentIndex + 1} of {TOTAL_QUESTIONS}
       </p>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
         <div
-          className="h-full rounded-full bg-slate-900 transition-all duration-300"
+          className="h-full rounded-full bg-[#2d5a4a] transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -40,6 +41,7 @@ export function SupportCheck() {
 
   const question = SUPPORT_CHECK_QUESTIONS[currentIndex];
   const isLastQuestion = currentIndex === TOTAL_QUESTIONS - 1;
+  const isSafetyQuestion = question.isSafetyScreening;
 
   useEffect(() => {
     if (!sessionStorage.getItem(SESSION_STARTED_KEY)) {
@@ -47,10 +49,14 @@ export function SupportCheck() {
     }
   }, [router]);
 
+  const handleBack = () => {
+    if (currentIndex === 0) return;
+    setCurrentIndex((i) => i - 1);
+    setCurrentValue(answers[SUPPORT_CHECK_QUESTIONS[currentIndex - 1].id] ?? "");
+  };
+
   const handleContinue = () => {
-    if (!currentValue.trim()) {
-      return;
-    }
+    if (!currentValue.trim()) return;
 
     if (question.isSafetyScreening && checkForCrisis(currentValue)) {
       return;
@@ -70,66 +76,80 @@ export function SupportCheck() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="px-6 pt-8">
-        <p className="text-sm font-medium tracking-wide text-slate-500">
-          ClearHead
-        </p>
-      </header>
+    <PageShell step={2}>
+      <QuestionProgress currentIndex={currentIndex} />
 
-      <main className="flex flex-1 flex-col px-6 pb-24 pt-6">
-        <ProgressBar currentIndex={currentIndex} />
-
-        <div className="mt-8 max-w-lg">
-          <h1 className="text-xl font-semibold leading-snug text-slate-900">
-            {question.text}
-          </h1>
-
-          {question.inputType === "textarea" ? (
-            <textarea
-              value={currentValue}
-              onChange={(event) => setCurrentValue(event.target.value)}
-              placeholder="Share as much or as little as you like..."
-              rows={4}
-              className="mt-4 w-full rounded-lg border border-slate-200 p-4 text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none"
-            />
-          ) : (
-            <div className="mt-4 space-y-2">
-              {question.options?.map((option) => (
-                <label
-                  key={option}
-                  className={`flex cursor-pointer items-center rounded-lg border p-4 transition-colors ${
-                    currentValue === option
-                      ? "border-slate-900 bg-slate-50"
-                      : "border-slate-200 hover:bg-slate-50"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name={question.id}
-                    value={option}
-                    checked={currentValue === option}
-                    onChange={(event) => setCurrentValue(event.target.value)}
-                    className="mr-3"
-                  />
-                  <span className="text-slate-900">{option}</span>
-                </label>
-              ))}
-            </div>
-          )}
-
+      <div className="mt-8 max-w-lg">
+        {currentIndex > 0 && (
           <button
             type="button"
-            onClick={handleContinue}
-            disabled={!currentValue.trim()}
-            className="mt-8 rounded-full bg-slate-900 px-8 py-3 text-base font-medium text-white transition-colors hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handleBack}
+            className="mb-4 flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700"
           >
-            {isLastQuestion ? "See my support options" : "Continue"}
+            ← Back
           </button>
-        </div>
-      </main>
+        )}
 
-      <CrisisFooter />
-    </div>
+        {isSafetyQuestion && (
+          <p className="mb-3 text-sm text-slate-500">
+            We ask everyone this — it helps us know if you might need immediate
+            support.
+          </p>
+        )}
+
+        <h1 className="text-xl font-semibold leading-snug text-slate-900">
+          {question.text}
+        </h1>
+
+        {question.inputType === "textarea" ? (
+          <textarea
+            value={currentValue}
+            onChange={(event) => setCurrentValue(event.target.value)}
+            placeholder="Share as much or as little as you like..."
+            rows={5}
+            className="mt-4 w-full rounded-lg border border-slate-200 p-4 text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#2d5a4a] focus:outline-none focus:ring-1 focus:ring-[#2d5a4a] min-h-[120px]"
+          />
+        ) : (
+          <div className="mt-4 space-y-2">
+            {question.options?.map((option) => (
+              <label
+                key={option}
+                className={`flex cursor-pointer items-center rounded-xl border p-4 transition-all active:scale-[0.99] ${
+                  currentValue === option
+                    ? "border-[#2d5a4a] bg-[#e8f0ed] ring-2 ring-[#2d5a4a]"
+                    : "border-slate-200 hover:bg-slate-50"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name={question.id}
+                  value={option}
+                  checked={currentValue === option}
+                  onChange={(event) => setCurrentValue(event.target.value)}
+                  className="mr-3 focus-visible:ring-2 focus-visible:ring-[#2d5a4a] focus-visible:ring-offset-2"
+                />
+                <span className="text-slate-900">{option}</span>
+              </label>
+            ))}
+          </div>
+        )}
+
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={handleContinue}
+          disabled={!currentValue.trim()}
+          className="mt-8 w-full sm:w-auto"
+        >
+          {isLastQuestion ? "See my support options" : "Continue"}
+        </Button>
+
+        {!currentValue.trim() && (
+          <p className="mt-2 text-center text-xs text-slate-400">
+            Share a little to continue — there&apos;s no wrong answer.
+          </p>
+        )}
+      </div>
+    </PageShell>
   );
 }

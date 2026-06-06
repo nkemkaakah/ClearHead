@@ -2,31 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CrisisFooter } from "@/components/CrisisFooter";
-import type { SupportPlan } from "@/lib/manus/support-plan";
+import { Button } from "@/components/ui/Button";
+import { PageShell } from "@/components/ui/PageShell";
 import { SUPPORT_PLAN_KEY } from "@/lib/session/keys";
+import { isSupportPlan } from "@/lib/session/plan";
 
-function isSupportPlan(value: unknown): value is SupportPlan {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-
-  const plan = value as Record<string, unknown>;
-
-  return (
-    (plan.urgency_band === "low" ||
-      plan.urgency_band === "moderate" ||
-      plan.urgency_band === "urgent") &&
-    Array.isArray(plan.route) &&
-    plan.route.every((item) => typeof item === "string") &&
-    typeof plan.message === "string" &&
-    typeof plan.safety_flag === "boolean"
-  );
-}
+type PageState = "loading" | "ready";
 
 export function MessagePage() {
   const router = useRouter();
-  const [message, setMessage] = useState<string | null>(null);
+  const [state, setState] = useState<PageState>("loading");
+  const [message, setMessage] = useState<string>("");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -46,66 +32,67 @@ export function MessagePage() {
       }
 
       setMessage(plan.message);
+      setState("ready");
     } catch {
       router.replace("/");
     }
   }, [router]);
 
   const handleCopy = async () => {
-    if (!message) {
-      return;
-    }
-
+    if (!message) return;
     await navigator.clipboard.writeText(message);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!message) {
+  if (state !== "ready") {
     return null;
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="px-6 pt-8">
-        <p className="text-sm font-medium tracking-wide text-slate-500">
-          ClearHead
+    <PageShell step={4}>
+      <div className="max-w-lg">
+        <h1 className="text-xl font-semibold text-slate-900">
+          Your copy-ready message
+        </h1>
+        <p className="mt-2 text-slate-600">
+          Copy this and paste it into an email or message to your uni
+          counselling service or GP. You can edit it before sending.
         </p>
-      </header>
 
-      <main className="flex flex-1 flex-col px-6 pb-24 pt-6">
-        <div className="max-w-lg">
-          <h1 className="text-xl font-semibold text-slate-900">
-            Your copy-ready message
-          </h1>
-          <p className="mt-2 text-slate-600">
-            Copy this and paste it into an email or message to your uni
-            counselling service or GP.
-          </p>
-
-          <blockquote className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-slate-800">
-            {message}
-          </blockquote>
-
-          <button
-            type="button"
-            onClick={() => void handleCopy()}
-            className="mt-6 rounded-full bg-slate-900 px-8 py-3 text-base font-medium text-white transition-colors hover:bg-slate-800"
-          >
-            {copied ? "Copied ✓" : "Copy message"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => router.push("/checkin")}
-            className="mt-4 block rounded-full border border-slate-300 px-8 py-3 text-base font-medium text-slate-900 transition-colors hover:bg-slate-50"
-          >
-            Next: set up your check-in
-          </button>
+        <div
+          aria-live="polite"
+          className="mt-6 rounded-xl border border-slate-200 bg-white p-5 text-[15px] leading-relaxed text-slate-800 shadow-inner"
+        >
+          {message}
         </div>
-      </main>
 
-      <CrisisFooter />
-    </div>
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={() => void handleCopy()}
+          className={`mt-6 w-full sm:w-auto transition-colors ${
+            copied ? "bg-green-700 hover:bg-green-700" : ""
+          }`}
+        >
+          {copied ? "Message copied ✓" : "Copy message"}
+        </Button>
+
+        {copied && (
+          <p className="mt-3 text-sm text-slate-500">
+            Paste this into your email app and edit anything before sending.
+          </p>
+        )}
+
+        <Button
+          variant="secondary"
+          size="lg"
+          onClick={() => router.push("/checkin")}
+          className="mt-4 w-full sm:w-auto"
+        >
+          Continue to wellbeing check-in
+        </Button>
+      </div>
+    </PageShell>
   );
 }
