@@ -1,0 +1,25 @@
+---
+description: Cursor SDK — check latest docs when adding or changing engineering automation
+globs: scripts/**,.github/**,**/*sdk*.{ts,js,mjs},**/cursor/**
+alwaysApply: false
+---
+
+# Cursor SDK (Engineering Agent)
+
+Cursor SDK sits in the **engineering layer**, not the student-facing runtime. Use it to build, refactor, and maintain ClearHead — not to power the support navigator.
+
+## When to check docs
+
+When adding or changing how Cursor SDK is used (new agents, subagents, CI scripts, MCP wiring), skim the latest docs/changelog before implementing new patterns:
+
+- TypeScript SDK: https://cursor.com/docs/api/sdk/typescript
+- Use the `cursor-sdk` skill in this workspace for runtime choice, auth, streaming, and MCP patterns
+
+You do not need to re-read everything for small edits. For **new patterns** (local vs cloud runtime, subagents, webhooks, sandboxing), verify current behaviour first.
+
+## Boundaries
+
+- Cursor SDK → code generation, refactors, CI, maintenance automation
+- Manus API → student support workflow at runtime (see `manus-api.mdc`)
+
+Do not route student support checks or signposting through Cursor SDK.

@@ -1,0 +1,36 @@
+---
+description: TypeScript standards — no type errors, fix correctly
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+# TypeScript — Zero Type Errors
+
+## Non-negotiable
+
+- Never ship code with TypeScript errors.
+- Run `npx tsc --noEmit` (or `npm run build`) before marking a step complete.
+- Do not use `@ts-ignore`, `@ts-expect-error`, or `any` to silence errors unless documented with a one-line reason.
+
+## Fix errors the correct way
+
+| ❌ Wrong | ✅ Correct |
+|---|---|
+| `as any` to bypass | Narrow the type or add a proper type guard |
+| `@ts-ignore` | Fix the underlying type mismatch |
+| Optional chaining everywhere | Define accurate types at boundaries (API, props, state) |
+| Duplicate types | Import shared types from `types/` or co-locate with domain |
+| `// @ts-nocheck` | Never use in production code |
+
+## Patterns
+
+- API responses (Manus, etc.): define Zod schema or explicit interface at the boundary, parse once, use typed result internally.
+- React props: explicit `interface` or `type`; no implicit `any` on event handlers.
+- Union types: use exhaustive `switch` with `never` default.
+- Nullable values: handle `null`/`undefined` explicitly; don't assume.
+
+## Before committing
+
+- [ ] `npx tsc --noEmit` passes
+- [ ] `npm run build` passes (once Next.js exists)
+- [ ] No new `@ts-ignore` or untyped `any`

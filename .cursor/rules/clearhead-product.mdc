@@ -1,0 +1,70 @@
+---
+description: ClearHead product spec — reference when implementing features or determining user flow
+alwaysApply: true
+---
+
+# ClearHead Product Reference
+
+Always read `PRODUCT.md` at the root of this repo before implementing any new feature or making decisions about user flow, copy, or AI behaviour.
+
+## Architecture
+
+- **App:** Next.js end-to-end on Vercel
+- **Runtime agent:** Manus API — student support workflow (see `manus-api.mdc`)
+- **Engineering agent:** Cursor SDK — build/refactor only (see `cursor-sdk-engineering.mdc`)
+
+## Core Constraints (memorise these)
+
+- No login required. The entire flow is session-based.
+- Crisis override must fire at **any point** in the flow if high-risk language is detected. It is never blocked by the current step.
+- AI is used for adaptive intake, urgency routing, and message generation only — never for diagnosis or therapy.
+- The copy-ready message (Step 4) is core product value. Do not remove or make it optional.
+- The wellbeing check-in (Step 5) must close the loop. Students must not feel dropped after the flow ends.
+
+## User Flow Order
+
+```
+Warm Entry → Support Check → Urgency Band → Action Plan → Copy-Ready Message → Check-In
+```
+
+Do not reorder steps. Do not add steps between Support Check and Action Plan without a clear product reason.
+
+## Language Rules
+
+Every piece of UI copy, AI prompt, and API response must follow these rules:
+
+| ❌ Never say | ✅ Always say |
+|---|---|
+| AI mental-health triage | AI-supported support check |
+| Diagnosis | Urgency signal / support route |
+| Treatment plan | Next-step support plan |
+| Crisis handled by AI | Crisis override to trusted emergency resources |
+| AI therapist | Student support navigator |
+| ChatGPT for mental health | Responsible support-routing system |
+
+If you write copy that uses a prohibited term, rewrite it before committing.
+
+## Urgency Bands
+
+The AI must assign exactly one of three bands — no custom bands, no sub-bands:
+
+- 🟡 **Low** — stress, burnout, early signs → self-help + uni counselling
+- 🟠 **Moderate** — anxiety, low mood, functional impairment → GP + NHS Talking Therapies
+- 🔴 **Urgent** — crisis signals, self-harm language → immediate crisis override
+
+## Crisis Override
+
+Crisis override must:
+1. Bypass all other steps immediately
+2. Show exactly: 999, 116 123 (Samaritans), and Text SHOUT to 85258
+3. Involve zero AI in the response — hardcoded trusted resources only
+4. Be reachable from any component at any point in the flow
+
+## Feature Checklist
+
+Before shipping any new feature, verify:
+- [ ] Does it conform to the language rules in `PRODUCT.md`?
+- [ ] Does it preserve the step order?
+- [ ] Does it leave the crisis override path unblocked?
+- [ ] Does it work without a user account?
+- [ ] Does it avoid framing the AI as diagnostic or therapeutic?

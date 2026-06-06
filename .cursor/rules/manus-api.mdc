@@ -1,0 +1,29 @@
+---
+description: Manus API — always check docs before wiring or changing runtime support logic
+alwaysApply: false
+---
+# Manus API (Runtime Agent)
+
+Manus is ClearHead's **runtime agentic layer**. It orchestrates the student support workflow: intake summarisation, urgency routing, signposting, and follow-up. Changes here affect what students see and what advice they get.
+
+## Non-negotiable
+
+Before wiring or changing **any** Manus logic, check the current Manus docs:
+
+- Docs index: https://open.manus.ai/docs/llms.txt
+- API v2 intro: https://open.manus.ai/docs/v2/introduction
+- Agents: https://open.manus.ai/docs/v2/agents-overview
+- Tasks: https://open.manus.ai/docs/v2/task.create (and related task endpoints)
+- Skills: https://open.manus.ai/docs/v2/skill.list
+- Webhooks: https://open.manus.ai/docs/v2/webhooks-overview
+- Safety, limits, and auth: read the relevant v2 pages before shipping
+
+Do not implement from memory. The API evolves; verify agents, tasks, skills, webhooks, and limits against current docs.
+
+## ClearHead scope
+
+Manus handles support-check conversation, urgency band assignment, action-plan generation, copy-ready messages, and check-in follow-up — **not** crisis override. Crisis override stays hardcoded in the app with zero Manus involvement.
+
+## Language
+
+All Manus prompts and outputs must follow the language rules in `PRODUCT.md`. Never frame Manus as a therapist or diagnosis tool.
