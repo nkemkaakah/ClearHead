@@ -9,6 +9,9 @@ export type SupportPlan = {
   route: string[];
   message: string;
   safety_flag: boolean;
+  main_concerns: string[];
+  explanation: string;
+  check_in_plan: string;
 };
 
 export const SUPPORT_PLAN_SCHEMA = {
@@ -24,8 +27,22 @@ export const SUPPORT_PLAN_SCHEMA = {
     },
     message: { type: "string" },
     safety_flag: { type: "boolean" },
+    main_concerns: {
+      type: "array",
+      items: { type: "string" },
+    },
+    explanation: { type: "string" },
+    check_in_plan: { type: "string" },
   },
-  required: ["urgency_band", "route", "message", "safety_flag"],
+  required: [
+    "urgency_band",
+    "route",
+    "message",
+    "safety_flag",
+    "main_concerns",
+    "explanation",
+    "check_in_plan",
+  ],
   additionalProperties: false,
 } as const;
 
@@ -42,6 +59,9 @@ export function createUrgentSupportPlan(): SupportPlan {
     route: [],
     message: "",
     safety_flag: true,
+    main_concerns: [],
+    explanation: "",
+    check_in_plan: "",
   };
 }
 
@@ -51,14 +71,17 @@ function buildPrompt(answers: Record<string, string>): string {
     return `- ${question.text}\n  Answer: ${answer}`;
   }).join("\n");
 
-  return `You are ClearHead, a UK student support navigator. Review this completed support check and return a next-step support plan.
+  return `You are ClearHead, a UK student support navigator. Review this completed support check and return a structured next-step support plan.
 
 Rules:
 - This is a support check, not triage or diagnosis.
-- Assign an urgency signal as urgency_band: low, moderate, or urgent.
-- route must be an ordered list of concrete UK support routes (uni counselling, GP, NHS Talking Therapies, etc.).
-- message must be a copy-ready first-contact message the student can send tonight.
-- safety_flag is true only if answers suggest risk; never provide therapeutic advice.
+- Assign urgency_band: low (self-care + monitor), moderate (contact support soon), or urgent (immediate crisis).
+- route: ordered list of concrete UK support routes (uni counselling, GP, NHS Talking Therapies, etc.).
+- message: a copy-ready first-contact message the student can paste and send tonight.
+- safety_flag: true only if answers suggest immediate risk.
+- main_concerns: a short list of the key themes you identified (e.g. ["sleep disruption", "anxiety", "missed lectures"]). Keep each item brief — 2–4 words.
+- explanation: 1–2 sentences explaining why this urgency band and route fits. Start with "Based on what you shared…". Be warm, not clinical.
+- check_in_plan: one sentence suggesting when to check in again (e.g. "We suggest checking in again in about 3 days, or sooner if things worsen.").
 - Do not use words: triage, diagnosis, treatment plan, therapist.
 
 Support check answers:
@@ -92,11 +115,29 @@ function parseSupportPlan(value: unknown): SupportPlan {
     throw new Error("Manus structured output had invalid safety_flag");
   }
 
+  if (
+    !Array.isArray(plan.main_concerns) ||
+    !plan.main_concerns.every((item) => typeof item === "string")
+  ) {
+    throw new Error("Manus structured output had invalid main_concerns");
+  }
+
+  if (typeof plan.explanation !== "string") {
+    throw new Error("Manus structured output had invalid explanation");
+  }
+
+  if (typeof plan.check_in_plan !== "string") {
+    throw new Error("Manus structured output had invalid check_in_plan");
+  }
+
   return {
     urgency_band: plan.urgency_band,
     route: plan.route,
     message: plan.message,
     safety_flag: plan.safety_flag,
+    main_concerns: plan.main_concerns,
+    explanation: plan.explanation,
+    check_in_plan: plan.check_in_plan,
   };
 }
 

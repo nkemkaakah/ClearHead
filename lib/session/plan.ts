@@ -14,6 +14,10 @@ export function isSupportPlan(value: unknown): value is SupportPlan {
     Array.isArray(plan.route) &&
     plan.route.every((item) => typeof item === "string") &&
     typeof plan.message === "string" &&
-    typeof plan.safety_flag === "boolean"
+    typeof plan.safety_flag === "boolean" &&
+    Array.isArray(plan.main_concerns) &&
+    plan.main_concerns.every((item) => typeof item === "string") &&
+    typeof plan.explanation === "string" &&
+    typeof plan.check_in_plan === "string"
   );
 }

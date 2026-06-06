@@ -3,6 +3,9 @@ import type { UrgencyBand } from "@/lib/manus/support-plan";
 type ActionPlanProps = {
   urgencyBand: Exclude<UrgencyBand, "urgent">;
   route: string[];
+  mainConcerns: string[];
+  explanation: string;
+  checkInPlan: string;
 };
 
 type BandConfig = {
@@ -96,40 +99,91 @@ function linkifyText(text: string) {
   return parts;
 }
 
-export function ActionPlan({ urgencyBand, route }: ActionPlanProps) {
+export function ActionPlan({
+  urgencyBand,
+  route,
+  mainConcerns,
+  explanation,
+  checkInPlan,
+}: ActionPlanProps) {
   const config = BAND_CONFIG[urgencyBand];
 
   return (
-    <div className="max-w-lg">
-      <p className="text-sm font-medium text-slate-500">Your urgency signal</p>
+    <div className="max-w-lg space-y-8">
+      {/* Summary card */}
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          Your urgency signal
+        </p>
+        <div
+          className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${config.pillClass}`}
+        >
+          {config.pillText}
+        </div>
+        <p className="mt-1 text-sm text-slate-600">{config.description}</p>
 
-      <div className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${config.pillClass}`}>
-        {config.pillText}
+        {mainConcerns.length > 0 && (
+          <div className="mt-4 border-t border-slate-100 pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              What we heard
+            </p>
+            <ul className="mt-2 flex flex-wrap gap-2">
+              {mainConcerns.map((concern) => (
+                <li
+                  key={concern}
+                  className="rounded-full bg-slate-100 px-3 py-0.5 text-sm text-slate-700"
+                >
+                  {concern}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {explanation && (
+          <div className="mt-4 border-t border-slate-100 pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              Why this route
+            </p>
+            <p className="mt-1 text-sm text-slate-700">{explanation}</p>
+          </div>
+        )}
+
+        {checkInPlan && (
+          <div className="mt-4 border-t border-slate-100 pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              Next check-in
+            </p>
+            <p className="mt-1 text-sm text-slate-700">{checkInPlan}</p>
+          </div>
+        )}
       </div>
-      <p className="mt-1 text-sm text-slate-600">{config.description}</p>
 
-      <h2 className="mt-8 text-xl font-semibold text-slate-900">
-        Your next-step support plan
-      </h2>
-      <p className="mt-2 text-sm text-slate-600">
-        Concrete support routes you can act on tonight.
-      </p>
+      {/* Route list */}
+      <div>
+        <h2 className="text-xl font-semibold text-slate-900">
+          Your next-step support plan
+        </h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Concrete support routes you can act on tonight.
+        </p>
 
-      <ol className="mt-4 space-y-3">
-        {route.map((step, index) => (
-          <li
-            key={step}
-            className={`flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${
-              index === 0 ? config.firstStepBorder : ""
-            }`}
-          >
-            <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
-              {index + 1}
-            </span>
-            <span className="text-slate-800">{linkifyText(step)}</span>
-          </li>
-        ))}
-      </ol>
+        <ol className="mt-4 space-y-3">
+          {route.map((step, index) => (
+            <li
+              key={step}
+              className={`flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${
+                index === 0 ? config.firstStepBorder : ""
+              }`}
+            >
+              <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
+                {index + 1}
+              </span>
+              <span className="text-slate-800">{linkifyText(step)}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }

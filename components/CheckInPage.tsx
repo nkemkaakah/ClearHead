@@ -1,14 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { Button } from "@/components/ui/Button";
 import { PageShell } from "@/components/ui/PageShell";
 import {
   CHECKIN_SLIDERS,
   DEFAULT_SCORES,
+  roundScore,
   SLIDER_MAX,
   SLIDER_MIN,
+  SLIDER_STEP,
   WORSE_THRESHOLD,
   type SliderId,
 } from "@/lib/checkin/sliders";
@@ -39,7 +41,9 @@ export function CheckInPage() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [scores, setScores] = useState(DEFAULT_SCORES);
+  const [phone, setPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [smsScheduled, setSmsScheduled] = useState(false);
   const [outcome, setOutcome] = useState<"stable" | "worse" | null>(null);
   const [savedRoutes, setSavedRoutes] = useState<string[]>([]);
 
@@ -70,12 +74,33 @@ export function CheckInPage() {
     setScores((current) => ({ ...current, [id]: value }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const rounded = {
+      mood: roundScore(scores.mood),
+      sleep: roundScore(scores.sleep),
+      stress: roundScore(scores.stress),
+    };
     const average =
-      (scores.mood + scores.sleep + scores.stress) / CHECKIN_SLIDERS.length;
+      (rounded.mood + rounded.sleep + rounded.stress) / CHECKIN_SLIDERS.length;
 
     setOutcome(average >= WORSE_THRESHOLD ? "stable" : "worse");
     sessionStorage.setItem(CHECKIN_COMPLETED_KEY, new Date().toISOString());
+
+    if (phone.trim()) {
+      try {
+        const response = await fetch("/api/schedule-check-in", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: phone.trim() }),
+        });
+        if (response.ok) {
+          setSmsScheduled(true);
+        }
+      } catch {
+        // Non-critical — submit proceeds regardless
+      }
+    }
+
     setSubmitted(true);
   };
 
@@ -101,12 +126,22 @@ export function CheckInPage() {
             How have you been since your support check?
           </h1>
           <p className="mt-2 text-slate-600">
-            Three quick questions — no right or wrong answers. This is just
-            for you.
+            We&apos;ll use this check-in to understand how things change over time.
+            Three quick questions — no right or wrong answers.
+          </p>
+          <p className="mt-2 text-sm text-slate-500">
+            If you add your phone number, ClearHead will send you a one-time SMS
+            in a few days to remind you to check in again.
           </p>
 
           <div className="mt-8 space-y-8">
-            {CHECKIN_SLIDERS.map((slider) => (
+            {CHECKIN_SLIDERS.map((slider) => {
+              const fillPercent =
+                ((scores[slider.id] - SLIDER_MIN) /
+                  (SLIDER_MAX - SLIDER_MIN)) *
+                100;
+
+              return (
               <div key={slider.id}>
                 <label
                   htmlFor={slider.id}
@@ -119,29 +154,57 @@ export function CheckInPage() {
                   type="range"
                   min={SLIDER_MIN}
                   max={SLIDER_MAX}
-                  step={1}
+                  step={SLIDER_STEP}
                   value={scores[slider.id]}
+                  aria-valuenow={roundScore(scores[slider.id])}
                   onChange={(event) =>
                     handleScoreChange(slider.id, Number(event.target.value))
                   }
-                  className="mt-3 h-2 w-full cursor-pointer accent-[#2d5a4a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5a4a] focus-visible:ring-offset-2"
+                  style={
+                    {
+                      "--slider-fill": `${fillPercent}%`,
+                    } as CSSProperties
+                  }
+                  className="checkin-slider mt-3 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5a4a] focus-visible:ring-offset-2"
                 />
                 <div className="mt-1 flex justify-between text-xs text-slate-500">
                   <span>{slider.lowLabel}</span>
                   <span>{slider.highLabel}</span>
                 </div>
                 <p className="mt-1 text-sm font-medium text-slate-700">
-                  {slider.label}: {scores[slider.id]}
+                  {slider.label}: {roundScore(scores[slider.id])}
                 </p>
               </div>
-            ))}
+              );
+            })}
+          </div>
+
+          <div className="mt-8">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-slate-900"
+            >
+              Phone number for one-time check-in SMS{" "}
+              <span className="font-normal text-slate-400">(optional)</span>
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="e.g. 07700 900123"
+              className="mt-2 w-full rounded-lg border border-slate-200 p-3 text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#2d5a4a] focus:outline-none focus:ring-1 focus:ring-[#2d5a4a]"
+            />
+            <p className="mt-1 text-xs text-slate-400">
+              We&apos;ll send a single reminder in about 3 days. No marketing, no spam.
+            </p>
           </div>
 
           <Button
             variant="primary"
             size="lg"
-            onClick={handleSubmit}
-            className="mt-8 w-full sm:w-auto"
+            onClick={() => void handleSubmit()}
+            className="mt-6 w-full sm:w-auto"
           >
             Share how I&apos;ve been
           </Button>
@@ -189,8 +252,9 @@ export function CheckInPage() {
           </ul>
 
           <p className="mt-6 text-sm text-slate-500">
-            If things feel harder later, come back and go through the support
-            check again — it&apos;s always here.
+            {smsScheduled
+              ? "We've scheduled a one-time check-in SMS for about 3 days from now. You can also come back to ClearHead any time."
+              : "You can return to ClearHead any time to run another check-in."}
           </p>
 
           <Button
@@ -238,6 +302,12 @@ export function CheckInPage() {
           <p className="mt-6 text-slate-600">
             Any one of these steps matters. You reached out once — you can do
             it again.
+          </p>
+
+          <p className="mt-4 text-sm text-slate-500">
+            {smsScheduled
+              ? "We've scheduled a one-time check-in SMS for about 3 days from now."
+              : "You can return to ClearHead any time to run another check-in."}
           </p>
 
           <Button

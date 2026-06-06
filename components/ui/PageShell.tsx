@@ -1,3 +1,4 @@
+import { ClearHeadLogoLink } from "@/components/ClearHeadLogoLink";
 import { CrisisFooter } from "@/components/CrisisFooter";
 import { FlowProgress } from "@/components/FlowProgress";
 
@@ -12,7 +13,7 @@ export function PageShell({ step, className = "", children }: PageShellProps) {
     <div className={`flex min-h-screen flex-col ${className}`}>
       <header className="px-6 pt-8 pb-4">
         <div className="mx-auto flex max-w-lg items-center justify-between">
-          <p className="text-sm font-medium text-slate-500">ClearHead</p>
+          <ClearHeadLogoLink />
           {step !== undefined && <FlowProgress step={step} />}
         </div>
       </header>
