@@ -2,17 +2,19 @@ import type { UrgencyBand } from "@/lib/manus/support-plan";
 
 type ActionPlanProps = {
   urgencyBand: Exclude<UrgencyBand, "urgent">;
-  route: string[];
+  primaryRoute: string;
+  secondaryRoutes: string[];
   mainConcerns: string[];
   explanation: string;
   checkInPlan: string;
+  plannedAction: string;
 };
 
 type BandConfig = {
   description: string;
   pillClass: string;
   pillText: string;
-  firstStepBorder: string;
+  accentBorder: string;
 };
 
 const BAND_CONFIG: Record<Exclude<UrgencyBand, "urgent">, BandConfig> = {
@@ -20,13 +22,13 @@ const BAND_CONFIG: Record<Exclude<UrgencyBand, "urgent">, BandConfig> = {
     pillText: "Low urgency signal",
     description: "Stress and early signs — support is available",
     pillClass: "bg-yellow-50 border border-yellow-200 text-yellow-900",
-    firstStepBorder: "border-l-4 border-l-yellow-400",
+    accentBorder: "border-l-4 border-l-yellow-400",
   },
   moderate: {
     pillText: "Moderate urgency signal",
     description: "Some functional impact — reaching out soon is a good idea",
     pillClass: "bg-amber-50 border border-amber-200 text-amber-900",
-    firstStepBorder: "border-l-4 border-l-amber-400",
+    accentBorder: "border-l-4 border-l-amber-400",
   },
 };
 
@@ -101,10 +103,12 @@ function linkifyText(text: string) {
 
 export function ActionPlan({
   urgencyBand,
-  route,
+  primaryRoute,
+  secondaryRoutes,
   mainConcerns,
   explanation,
   checkInPlan,
+  plannedAction,
 }: ActionPlanProps) {
   const config = BAND_CONFIG[urgencyBand];
 
@@ -149,6 +153,17 @@ export function ActionPlan({
           </div>
         )}
 
+        {plannedAction && (
+          <div className="mt-4 border-t border-slate-100 pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              What to do next
+            </p>
+            <p className="mt-1 text-sm font-medium text-slate-800">
+              {plannedAction}
+            </p>
+          </div>
+        )}
+
         {checkInPlan && (
           <div className="mt-4 border-t border-slate-100 pt-4">
             <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
@@ -168,21 +183,43 @@ export function ActionPlan({
           Concrete support routes you can act on tonight.
         </p>
 
-        <ol className="mt-4 space-y-3">
-          {route.map((step, index) => (
-            <li
-              key={step}
-              className={`flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${
-                index === 0 ? config.firstStepBorder : ""
-              }`}
+        {/* First step — prominent card */}
+        {primaryRoute && (
+          <div className="mt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              Your first step
+            </p>
+            <div
+              className={`mt-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${config.accentBorder}`}
             >
-              <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
-                {index + 1}
+              <span className="text-base font-semibold text-slate-900">
+                {linkifyText(primaryRoute)}
               </span>
-              <span className="text-slate-800">{linkifyText(step)}</span>
-            </li>
-          ))}
-        </ol>
+            </div>
+          </div>
+        )}
+
+        {/* Secondary routes */}
+        {secondaryRoutes.length > 0 && (
+          <div className="mt-6">
+            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+              Also consider
+            </p>
+            <ol className="mt-3 space-y-3">
+              {secondaryRoutes.map((step, index) => (
+                <li
+                  key={step}
+                  className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                >
+                  <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
+                    {index + 2}
+                  </span>
+                  <span className="text-slate-800">{linkifyText(step)}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </div>
     </div>
   );

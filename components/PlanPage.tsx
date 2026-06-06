@@ -130,10 +130,12 @@ export function PlanPage() {
           <div className="max-w-lg">
             <ActionPlan
               urgencyBand={plan.urgency_band}
-              route={plan.route}
+              primaryRoute={plan.primary_route}
+              secondaryRoutes={plan.secondary_routes}
               mainConcerns={plan.main_concerns}
               explanation={plan.explanation}
               checkInPlan={plan.check_in_plan}
+              plannedAction={plan.planned_action}
             />
             <p className="mt-4 text-sm text-slate-500">
               We&apos;ll send you a one-time check-in text in about 3 days to see
