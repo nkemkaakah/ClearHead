@@ -51,6 +51,13 @@ export async function POST(request: Request) {
       return NextResponse.json<SupportPlan>(createUrgentSupportPlan());
     }
 
-    return NextResponse.json({ error: "support_plan_failed" }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("[support-plan] failed:", message, stack);
+
+    return NextResponse.json(
+      { error: "support_plan_failed", detail: message },
+      { status: 500 },
+    );
   }
 }

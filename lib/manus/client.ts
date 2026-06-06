@@ -1,6 +1,8 @@
 const MANUS_BASE_URL = "https://api.manus.ai";
 const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 60_000;
+const TASK_SETTLE_MS = 1000;
+const NOT_FOUND_RETRY_LIMIT = 30;
 
 type ManusApiSuccess<T> = { ok: true } & T;
 
@@ -97,6 +99,10 @@ export async function pollUntilStopped(taskId: string): Promise<ManusEvent[]> {
   const startedAt = Date.now();
   const allEvents: ManusEvent[] = [];
   let cursor: string | undefined;
+  let notFoundRetries = 0;
+
+  // Newly created tasks are not always visible to listMessages immediately.
+  await sleep(TASK_SETTLE_MS);
 
   while (Date.now() - startedAt < POLL_TIMEOUT_MS) {
     const params = new URLSearchParams({
@@ -117,12 +123,22 @@ export async function pollUntilStopped(taskId: string): Promise<ManusEvent[]> {
     try {
       result = await manusFetch(`/v2/task.listMessages?${params.toString()}`);
     } catch (error) {
-      // Newly created tasks can take ~1s before listMessages sees them.
       if (error instanceof ManusApiError && error.code === "not_found") {
+        notFoundRetries += 1;
+        if (notFoundRetries > NOT_FOUND_RETRY_LIMIT) {
+          throw new Error(
+            `Manus task ${taskId} not found after ${NOT_FOUND_RETRY_LIMIT} retries`,
+          );
+        }
         await sleep(POLL_INTERVAL_MS);
         continue;
       }
       throw error;
+    }
+
+    if (!Array.isArray(result.messages)) {
+      await sleep(POLL_INTERVAL_MS);
+      continue;
     }
 
     allEvents.push(...result.messages);

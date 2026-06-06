@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActionPlan } from "@/components/ActionPlan";
 import { CrisisFooter } from "@/components/CrisisFooter";
 import { useCrisis } from "@/components/crisis/CrisisProvider";
@@ -36,8 +36,11 @@ export function PlanPage() {
   const { triggerCrisisOverride } = useCrisis();
   const [status, setStatus] = useState<PageStatus>("loading");
   const [plan, setPlan] = useState<SupportPlan | null>(null);
+  const activeRequestRef = useRef(0);
 
   const fetchPlan = async () => {
+    const requestId = activeRequestRef.current + 1;
+    activeRequestRef.current = requestId;
     setStatus("loading");
 
     const storedAnswers = sessionStorage.getItem(CHECK_ANSWERS_KEY);
@@ -62,12 +65,20 @@ export function PlanPage() {
         body: JSON.stringify({ answers }),
       });
 
+      if (requestId !== activeRequestRef.current) {
+        return;
+      }
+
       if (!response.ok) {
         setStatus("error");
         return;
       }
 
       const data: unknown = await response.json();
+
+      if (requestId !== activeRequestRef.current) {
+        return;
+      }
 
       if (!isSupportPlan(data)) {
         setStatus("error");
@@ -84,12 +95,20 @@ export function PlanPage() {
       setPlan(data);
       setStatus("ready");
     } catch {
+      if (requestId !== activeRequestRef.current) {
+        return;
+      }
       setStatus("error");
     }
   };
 
   useEffect(() => {
     void fetchPlan();
+
+    return () => {
+      // React Strict Mode remounts in dev — ignore in-flight results from the first mount.
+      activeRequestRef.current += 1;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
