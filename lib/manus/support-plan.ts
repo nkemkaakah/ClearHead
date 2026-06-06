@@ -26,6 +26,7 @@ export const SUPPORT_PLAN_SCHEMA = {
     safety_flag: { type: "boolean" },
   },
   required: ["urgency_band", "route", "message", "safety_flag"],
+  additionalProperties: false,
 } as const;
 
 export class CrisisDetectedError extends Error {
