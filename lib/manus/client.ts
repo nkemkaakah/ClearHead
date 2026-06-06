@@ -11,7 +11,9 @@ type ManusApiFailure = {
 
 export type ManusEvent = {
   type: string;
-  agent_status?: "running" | "stopped" | "waiting" | "error";
+  status_update?: {
+    agent_status?: "running" | "stopped" | "waiting" | "error";
+  };
   structured_output_result?: {
     success: boolean;
     value: unknown;
@@ -31,6 +33,16 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+class ManusApiError extends Error {
+  readonly code: string | undefined;
+
+  constructor(message: string, code?: string) {
+    super(message);
+    this.name = "ManusApiError";
+    this.code = code;
+  }
+}
+
 async function manusFetch<T>(
   path: string,
   options?: RequestInit,
@@ -48,7 +60,7 @@ async function manusFetch<T>(
 
   if (!data.ok) {
     const message = data.error?.message ?? "Unknown Manus API error";
-    throw new Error(`Manus API error: ${message}`);
+    throw new ManusApiError(message, data.error?.code);
   }
 
   return data;
@@ -69,11 +81,13 @@ export async function createTask(
   return result.task_id;
 }
 
-function getLatestAgentStatus(events: ManusEvent[]): ManusEvent["agent_status"] {
+type AgentStatus = "running" | "stopped" | "waiting" | "error";
+
+function getLatestAgentStatus(events: ManusEvent[]): AgentStatus | undefined {
   for (let index = events.length - 1; index >= 0; index -= 1) {
     const event = events[index];
-    if (event.type === "status_update" && event.agent_status) {
-      return event.agent_status;
+    if (event.type === "status_update" && event.status_update?.agent_status) {
+      return event.status_update.agent_status;
     }
   }
   return undefined;
@@ -94,11 +108,22 @@ export async function pollUntilStopped(taskId: string): Promise<ManusEvent[]> {
       params.set("cursor", cursor);
     }
 
-    const result = await manusFetch<{
+    let result: ManusApiSuccess<{
       messages: ManusEvent[];
       has_more: boolean;
       next_cursor?: string;
-    }>(`/v2/task.listMessages?${params.toString()}`);
+    }>;
+
+    try {
+      result = await manusFetch(`/v2/task.listMessages?${params.toString()}`);
+    } catch (error) {
+      // Newly created tasks can take ~1s before listMessages sees them.
+      if (error instanceof ManusApiError && error.code === "not_found") {
+        await sleep(POLL_INTERVAL_MS);
+        continue;
+      }
+      throw error;
+    }
 
     allEvents.push(...result.messages);
 
