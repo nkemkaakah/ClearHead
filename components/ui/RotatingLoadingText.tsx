@@ -57,7 +57,7 @@ export function RotatingLoadingText({
 
   return (
     <p
-      className={`min-h-[1.5rem] text-base font-medium text-[#2d5a4a] transition-opacity ease-in-out ${
+      className={`min-h-[1.5rem] text-base font-medium text-[var(--accent)] transition-opacity ease-in-out ${
         visible ? "opacity-100" : "opacity-0"
       }`}
       style={{ transitionDuration: `${FADE_MS}ms` }}

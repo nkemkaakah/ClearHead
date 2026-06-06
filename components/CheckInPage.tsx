@@ -157,14 +157,14 @@ export function CheckInPage() {
         <div className="max-w-lg">
           {/* Action question — shown only if user went through MessagePage */}
           {showActionQuestion && !actionQuestionDone && (
-            <div className="mb-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            <div className="mb-8 card p-5">
+              <p className="text-xs font-medium uppercase tracking-wide text-caption">
                 A quick question first
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-caption">
                 Before the sliders, just one question about your support plan.
               </p>
-              <h2 className="mt-3 text-base font-semibold text-slate-900">
+              <h2 className="mt-3 text-base font-semibold text-display">
                 Did you manage to send the message we prepared?
               </h2>
               <div className="mt-4 space-y-2">
@@ -181,8 +181,8 @@ export function CheckInPage() {
                     onClick={() => handleActionAnswer(value)}
                     className={`w-full rounded-xl border p-4 text-left text-sm font-medium transition-all ${
                       actionQuestionAnswer === value
-                        ? "border-[#2d5a4a] bg-[#e8f0ed] text-slate-900 ring-2 ring-[#2d5a4a]"
-                        : "border-slate-200 text-slate-800 hover:bg-slate-50"
+                        ? "option-selected text-display"
+                        : "border-default text-body hover:bg-accent-subtle"
                     }`}
                   >
                     {label}
@@ -225,11 +225,11 @@ export function CheckInPage() {
 
               {actionQuestionAnswer === "not_yet" && (
                 <div className="mt-4 space-y-3">
-                  <p className="text-sm text-slate-600">
+                  <p className="text-sm text-body">
                     No rush — you can still send it. Copy it again below.
                   </p>
                   {firstMessage && (
-                    <div className="rounded-lg border border-slate-100 bg-slate-50 p-4 text-[14px] leading-relaxed text-slate-800">
+                    <div className="rounded-lg border border-[var(--border-subtle)] bg-accent-subtle p-4 text-[14px] leading-relaxed text-body">
                       {firstMessage}
                     </div>
                   )}
@@ -258,14 +258,14 @@ export function CheckInPage() {
           {/* Sliders — shown immediately if no action question, or after action question is done */}
           {(!showActionQuestion || actionQuestionDone) && (
             <>
-              <h1 className="text-xl font-semibold text-slate-900">
+              <h1 className="text-xl font-semibold text-display">
                 How have you been since your support check?
               </h1>
-              <p className="mt-2 text-slate-600">
+              <p className="mt-2 text-body">
                 We&apos;ll use this check-in to understand how things change
                 over time. Three quick questions — no right or wrong answers.
               </p>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="mt-2 text-sm text-caption">
                 If you add your phone number, ClearHead will send you a
                 one-time SMS in a few days to remind you to check in again.
               </p>
@@ -281,7 +281,7 @@ export function CheckInPage() {
                     <div key={slider.id}>
                       <label
                         htmlFor={slider.id}
-                        className="block text-sm font-medium text-slate-900"
+                        className="block text-sm font-medium text-display"
                       >
                         {slider.label}
                       </label>
@@ -304,13 +304,13 @@ export function CheckInPage() {
                             "--slider-fill": `${fillPercent}%`,
                           } as CSSProperties
                         }
-                        className="checkin-slider mt-3 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5a4a] focus-visible:ring-offset-2"
+                        className="checkin-slider mt-3 w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
                       />
-                      <div className="mt-1 flex justify-between text-xs text-slate-500">
+                      <div className="mt-1 flex justify-between text-xs text-caption">
                         <span>{slider.lowLabel}</span>
                         <span>{slider.highLabel}</span>
                       </div>
-                      <p className="mt-1 text-sm font-medium text-slate-700">
+                      <p className="mt-1 text-sm font-medium text-body">
                         {slider.label}: {roundScore(scores[slider.id])}
                       </p>
                     </div>
@@ -321,10 +321,10 @@ export function CheckInPage() {
               <div className="mt-8">
                 <label
                   htmlFor="phone"
-                  className="block text-sm font-medium text-slate-900"
+                  className="block text-sm font-medium text-display"
                 >
                   Phone number for one-time check-in SMS{" "}
-                  <span className="font-normal text-slate-400">(optional)</span>
+                  <span className="font-normal text-caption">(optional)</span>
                 </label>
                 <input
                   id="phone"
@@ -332,9 +332,9 @@ export function CheckInPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="e.g. 07700 900123"
-                  className="mt-2 w-full rounded-lg border border-slate-200 p-3 text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#2d5a4a] focus:outline-none focus:ring-1 focus:ring-[#2d5a4a]"
+                  className="mt-2 w-full rounded-lg border border-default p-3 text-display shadow-sm placeholder:text-caption focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
                 />
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-caption">
                   We&apos;ll send a single reminder in about 3 days. No
                   marketing, no spam.
                 </p>
@@ -365,7 +365,7 @@ export function CheckInPage() {
             </p>
           </div>
 
-          <p className="mt-6 text-slate-700">
+          <p className="mt-6 text-body">
             Your support plan is still there whenever you need it. Small daily
             actions add up — here are a few to try:
           </p>
@@ -374,15 +374,15 @@ export function CheckInPage() {
             {STABLE_RESOURCES.map((resource) => (
               <li
                 key={resource.label}
-                className="flex items-start gap-2 text-slate-800"
+                className="flex items-start gap-2 text-body"
               >
-                <span className="mt-0.5 text-slate-400">→</span>
+                <span className="mt-0.5 text-caption">→</span>
                 {resource.href ? (
                   <a
                     href={resource.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#2d5a4a] underline"
+                    className="text-[var(--accent)] underline"
                   >
                     {resource.label}
                   </a>
@@ -393,7 +393,7 @@ export function CheckInPage() {
             ))}
           </ul>
 
-          <p className="mt-6 text-sm text-slate-500">
+          <p className="mt-6 text-sm text-caption">
             {smsScheduled
               ? "We've scheduled a one-time check-in SMS for about 3 days from now. You can also come back to ClearHead any time."
               : "You can return to ClearHead any time to run another check-in."}
@@ -435,18 +435,18 @@ export function CheckInPage() {
             </Button>
           </div>
 
-          <ol className="mt-6 list-decimal space-y-3 pl-5 text-slate-800">
+          <ol className="mt-6 list-decimal space-y-3 pl-5 text-body">
             {routesToShow.map((route) => (
               <li key={route}>{route}</li>
             ))}
           </ol>
 
-          <p className="mt-6 text-slate-600">
+          <p className="mt-6 text-body">
             Any one of these steps matters. You reached out once — you can do
             it again.
           </p>
 
-          <p className="mt-4 text-sm text-slate-500">
+          <p className="mt-4 text-sm text-caption">
             {smsScheduled
               ? "We've scheduled a one-time check-in SMS for about 3 days from now."
               : "You can return to ClearHead any time to run another check-in."}

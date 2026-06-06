@@ -18,23 +18,23 @@ export function ClearHeadLogo({
         aria-hidden="true"
         className="flex-shrink-0"
       >
-        <rect width="32" height="32" rx="9" fill="#e8f0ed" />
+        <rect width="32" height="32" rx="9" fill="var(--accent-muted)" />
         <path
           d="M9 21.5C11.5 14.5 20.5 14.5 23 21.5"
-          stroke="#2d5a4a"
+          stroke="var(--accent)"
           strokeWidth="2"
           strokeLinecap="round"
         />
-        <circle cx="16" cy="13" r="3" fill="#2d5a4a" />
+        <circle cx="16" cy="13" r="3" fill="var(--accent)" />
         <path
           d="M16 16V19"
-          stroke="#2d5a4a"
+          stroke="var(--accent)"
           strokeWidth="1.75"
           strokeLinecap="round"
         />
       </svg>
       {showWordmark && (
-        <span className="text-sm font-semibold tracking-tight text-slate-800 transition-colors group-hover:text-[#2d5a4a]">
+        <span className="text-sm font-semibold tracking-tight text-display transition-colors group-hover:text-[var(--accent)]">
           ClearHead
         </span>
       )}

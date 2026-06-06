@@ -10,9 +10,9 @@ type PageShellProps = {
 
 export function PageShell({ step, className = "", children }: PageShellProps) {
   return (
-    <div className={`flex min-h-screen flex-col ${className}`}>
-      <header className="px-6 pt-8 pb-4">
-        <div className="mx-auto flex max-w-lg items-center justify-between">
+    <div className={`flex min-h-screen flex-col bg-page ${className}`}>
+      <header className="border-b border-default/60 bg-surface/80 px-6 pb-4 pt-8 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <ClearHeadLogoLink />
           {step !== undefined && <FlowProgress step={step} />}
         </div>

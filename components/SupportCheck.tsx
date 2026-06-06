@@ -19,12 +19,12 @@ function QuestionProgress({ currentIndex }: { currentIndex: number }) {
 
   return (
     <div className="w-full max-w-lg">
-      <p className="mb-2 text-xs text-slate-400">
+      <p className="mb-2 text-xs text-caption">
         Question {currentIndex + 1} of {TOTAL_QUESTIONS}
       </p>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--border)]">
         <div
-          className="h-full rounded-full bg-[#2d5a4a] transition-all duration-300"
+          className="h-full rounded-full bg-[var(--accent)] transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -84,20 +84,20 @@ export function SupportCheck() {
           <button
             type="button"
             onClick={handleBack}
-            className="mb-4 flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700"
+            className="mb-4 flex items-center gap-1 text-sm text-caption hover:text-body"
           >
             ← Back
           </button>
         )}
 
         {isSafetyQuestion && (
-          <p className="mb-3 text-sm text-slate-500">
+          <p className="mb-3 text-sm text-caption">
             We ask everyone this — it helps us know if you might need immediate
             support.
           </p>
         )}
 
-        <h1 className="text-xl font-semibold leading-snug text-slate-900">
+        <h1 className="text-xl font-semibold leading-snug text-display">
           {question.text}
         </h1>
 
@@ -107,7 +107,7 @@ export function SupportCheck() {
             onChange={(event) => setCurrentValue(event.target.value)}
             placeholder="Share as much or as little as you like..."
             rows={5}
-            className="mt-4 w-full rounded-lg border border-slate-200 p-4 text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#2d5a4a] focus:outline-none focus:ring-1 focus:ring-[#2d5a4a] min-h-[120px]"
+            className="mt-4 min-h-[120px] w-full rounded-lg border border-default bg-surface p-4 text-display shadow-sm placeholder:text-caption focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
           />
         ) : (
           <div className="mt-4 space-y-2">
@@ -116,8 +116,8 @@ export function SupportCheck() {
                 key={option}
                 className={`flex cursor-pointer items-center rounded-xl border p-4 transition-all active:scale-[0.99] ${
                   currentValue === option
-                    ? "border-[#2d5a4a] bg-[#e8f0ed] ring-2 ring-[#2d5a4a]"
-                    : "border-slate-200 hover:bg-slate-50"
+                    ? "option-selected"
+                    : "border-default bg-surface hover:bg-accent-subtle"
                 }`}
               >
                 <input
@@ -126,9 +126,9 @@ export function SupportCheck() {
                   value={option}
                   checked={currentValue === option}
                   onChange={(event) => setCurrentValue(event.target.value)}
-                  className="mr-3 focus-visible:ring-2 focus-visible:ring-[#2d5a4a] focus-visible:ring-offset-2"
+                  className="mr-3 focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
                 />
-                <span className="text-slate-900">{option}</span>
+                <span className="text-display">{option}</span>
               </label>
             ))}
           </div>
@@ -145,7 +145,7 @@ export function SupportCheck() {
         </Button>
 
         {!currentValue.trim() && (
-          <p className="mt-2 text-center text-xs text-slate-400">
+          <p className="mt-2 text-center text-xs text-caption">
             Share a little to continue — there&apos;s no wrong answer.
           </p>
         )}

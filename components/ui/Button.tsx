@@ -6,14 +6,14 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const BASE =
-  "rounded-full font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2d5a4a] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
+  "rounded-full font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50";
 
 const VARIANTS = {
   primary:
-    "bg-[#2d5a4a] text-white hover:bg-[#1e3f34] active:scale-[0.98]",
+    "bg-[var(--accent)] text-white shadow-button hover:bg-[var(--accent-hover)] active:scale-[0.98]",
   secondary:
-    "border border-slate-300 text-slate-900 hover:bg-slate-50 active:scale-[0.98]",
-  ghost: "text-slate-600 hover:text-slate-900",
+    "border border-default bg-surface text-[var(--foreground)] hover:bg-accent-subtle active:scale-[0.98]",
+  ghost: "text-body hover:text-[var(--display)]",
 };
 
 const SIZES = {

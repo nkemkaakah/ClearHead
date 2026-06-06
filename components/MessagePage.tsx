@@ -99,10 +99,10 @@ export function MessagePage() {
   return (
     <PageShell step={4}>
       <div className="max-w-lg">
-        <h1 className="text-xl font-semibold text-slate-900">
+        <h1 className="text-xl font-semibold text-display">
           Your copy-ready messages
         </h1>
-        <p className="mt-2 text-slate-600">
+        <p className="mt-2 text-body">
           Choose who you want to contact. Copy the message and paste it into an
           email or app. Edit anything before sending.
         </p>
@@ -116,8 +116,8 @@ export function MessagePage() {
               onClick={() => setActiveTab(index)}
               className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-all ${
                 activeTab === index
-                  ? "border-[#2d5a4a] bg-[#2d5a4a] text-white"
-                  : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                  ? "border-[var(--accent)] bg-[var(--accent)] text-white shadow-button"
+                  : "border-default text-body hover:bg-accent-subtle"
               }`}
             >
               {draft.label}
@@ -128,13 +128,13 @@ export function MessagePage() {
         {/* Active message */}
         {activeMessage && (
           <div key={activeMessage.recipient} className="mt-6">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-caption">
               {activeMessage.label}
             </h2>
 
             <div
               aria-live="polite"
-              className="mt-3 rounded-xl border border-slate-200 bg-white p-5 text-[15px] leading-relaxed text-slate-800 shadow-inner"
+              className="mt-3 rounded-xl border border-default bg-surface p-5 text-[15px] leading-relaxed text-body shadow-inner"
             >
               {activeMessage.text}
             </div>
@@ -151,8 +151,8 @@ export function MessagePage() {
             </Button>
 
             {showActionPrompt && actionStatus === "idle" && (
-              <div className="mt-5 rounded-xl border border-slate-100 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-800">
+              <div className="mt-5 rounded-xl border border-[var(--border-subtle)] bg-accent-subtle p-4">
+                <p className="text-sm font-medium text-body">
                   Did you manage to send it?
                 </p>
                 <div className="mt-3 flex flex-wrap gap-3">
@@ -182,8 +182,8 @@ export function MessagePage() {
 
         {/* Stuck branching UI */}
         {actionStatus === "stuck" && stuckReason === null && (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-            <p className="font-semibold text-slate-900">
+          <div className="mt-6 rounded-xl border border-default bg-surface p-5">
+            <p className="font-semibold text-display">
               That&apos;s okay. What&apos;s getting in the way?
             </p>
             <div className="mt-4 space-y-2">
@@ -199,7 +199,7 @@ export function MessagePage() {
                   key={reason}
                   type="button"
                   onClick={() => setStuckReason(reason)}
-                  className="w-full rounded-xl border border-slate-200 p-4 text-left text-sm text-slate-800 transition-all hover:border-[#2d5a4a] hover:bg-[#e8f0ed]"
+                  className="w-full rounded-xl border border-default p-4 text-left text-sm text-body transition-all hover:border-[var(--accent)] hover:bg-accent-muted"
                 >
                   {label}
                 </button>
@@ -209,11 +209,11 @@ export function MessagePage() {
         )}
 
         {actionStatus === "stuck" && stuckReason === "too_long" && (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-            <p className="text-sm font-medium text-slate-700">
+          <div className="mt-6 rounded-xl border border-default bg-surface p-5">
+            <p className="text-sm font-medium text-body">
               Here&apos;s a shorter version:
             </p>
-            <div className="mt-3 rounded-lg border border-slate-100 bg-slate-50 p-4 text-[15px] leading-relaxed text-slate-800">
+            <div className="mt-3 rounded-lg border border-[var(--border-subtle)] bg-accent-subtle p-4 text-[15px] leading-relaxed text-body">
               {SHORT_MESSAGE}
             </div>
             <Button
@@ -228,11 +228,11 @@ export function MessagePage() {
         )}
 
         {actionStatus === "stuck" && stuckReason === "privacy" && (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-            <p className="text-sm font-medium text-slate-700">
+          <div className="mt-6 rounded-xl border border-default bg-surface p-5">
+            <p className="text-sm font-medium text-body">
               This version shares nothing personal:
             </p>
-            <div className="mt-3 rounded-lg border border-slate-100 bg-slate-50 p-4 text-[15px] leading-relaxed text-slate-800">
+            <div className="mt-3 rounded-lg border border-[var(--border-subtle)] bg-accent-subtle p-4 text-[15px] leading-relaxed text-body">
               {SHORT_MESSAGE}
             </div>
             <Button
@@ -247,16 +247,16 @@ export function MessagePage() {
         )}
 
         {actionStatus === "stuck" && stuckReason === "dont_know_who" && (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-            <p className="text-sm font-medium text-slate-700">
+          <div className="mt-6 rounded-xl border border-default bg-surface p-5">
+            <p className="text-sm font-medium text-body">
               Your clearest first step:
             </p>
             {primaryRoute && (
-              <div className="mt-3 rounded-xl border-l-4 border-l-[#2d5a4a] bg-[#e8f0ed] p-4">
-                <p className="font-medium text-slate-900">{primaryRoute}</p>
+              <div className="mt-3 rounded-xl border-l-4 border-l-[var(--accent)] bg-accent-muted p-4">
+                <p className="font-medium text-display">{primaryRoute}</p>
               </div>
             )}
-            <p className="mt-3 text-sm text-slate-600">
+            <p className="mt-3 text-sm text-body">
               Search your university website for &ldquo;wellbeing&rdquo; or
               &ldquo;student support&rdquo; to find the right email address.
             </p>
@@ -264,11 +264,11 @@ export function MessagePage() {
         )}
 
         {actionStatus === "stuck" && stuckReason === "overwhelmed" && (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-            <p className="text-sm font-medium text-slate-700">
+          <div className="mt-6 rounded-xl border border-default bg-surface p-5">
+            <p className="text-sm font-medium text-body">
               One tiny step — that&apos;s all.
             </p>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-body">
               Just copy the message and save it for later. You don&apos;t have
               to send it right now.
             </p>

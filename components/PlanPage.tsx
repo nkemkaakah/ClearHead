@@ -103,16 +103,16 @@ export function PlanPage() {
 
       {status === "error" && (
         <div className="max-w-lg">
-          <h1 className="text-xl font-semibold text-slate-900">
-            Something went wrong
-          </h1>
-          <p className="mt-2 text-slate-600">
-            We couldn&apos;t load your support plan right now. Please try
-            again — your answers are still saved.
-          </p>
-          <p className="mt-3 text-sm text-slate-500">
-            If you need help right now, the crisis numbers are below.
-          </p>
+        <h1 className="text-xl font-semibold text-display">
+          Something went wrong
+        </h1>
+        <p className="mt-2 text-body">
+          We couldn&apos;t load your support plan right now. Please try
+          again — your answers are still saved.
+        </p>
+        <p className="mt-3 text-sm text-caption">
+          If you need help right now, the crisis numbers are below.
+        </p>
           <Button
             variant="primary"
             size="lg"
@@ -137,7 +137,7 @@ export function PlanPage() {
               checkInPlan={plan.check_in_plan}
               plannedAction={plan.planned_action}
             />
-            <p className="mt-4 text-sm text-slate-500">
+            <p className="mt-4 text-sm text-caption">
               We&apos;ll send you a one-time check-in text in about 3 days to see
               how things are going. You can also come back to ClearHead any time.
             </p>

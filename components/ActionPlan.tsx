@@ -69,7 +69,7 @@ function linkifyText(text: string) {
         <a
           key={key++}
           href={`tel:${phoneMatch[0].replace(/\s/g, "")}`}
-          className="text-[#2d5a4a] underline"
+          className="text-[var(--accent)] underline"
         >
           {phoneMatch[0]}
         </a>,
@@ -86,7 +86,7 @@ function linkifyText(text: string) {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#2d5a4a] underline"
+          className="text-[var(--accent)] underline"
         >
           {urlMatch[0]}
         </a>,
@@ -115,8 +115,8 @@ export function ActionPlan({
   return (
     <div className="max-w-lg space-y-8">
       {/* Summary card */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+      <div className="card-accent p-5">
+        <p className="text-xs font-medium uppercase tracking-wide text-caption">
           Your urgency signal
         </p>
         <div
@@ -124,18 +124,18 @@ export function ActionPlan({
         >
           {config.pillText}
         </div>
-        <p className="mt-1 text-sm text-slate-600">{config.description}</p>
+        <p className="mt-1 text-sm text-body">{config.description}</p>
 
         {mainConcerns.length > 0 && (
-          <div className="mt-4 border-t border-slate-100 pt-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="mt-4 border-t border-[var(--border-subtle)] pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-caption">
               What we heard
             </p>
             <ul className="mt-2 flex flex-wrap gap-2">
               {mainConcerns.map((concern) => (
                 <li
                   key={concern}
-                  className="rounded-full bg-slate-100 px-3 py-0.5 text-sm text-slate-700"
+                  className="rounded-full bg-surface px-3 py-0.5 text-sm text-body shadow-sm"
                 >
                   {concern}
                 </li>
@@ -145,54 +145,54 @@ export function ActionPlan({
         )}
 
         {explanation && (
-          <div className="mt-4 border-t border-slate-100 pt-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="mt-4 border-t border-[var(--border-subtle)] pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-caption">
               Why this route
             </p>
-            <p className="mt-1 text-sm text-slate-700">{explanation}</p>
+            <p className="mt-1 text-sm text-body">{explanation}</p>
           </div>
         )}
 
         {plannedAction && (
-          <div className="mt-4 border-t border-slate-100 pt-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="mt-4 border-t border-[var(--border-subtle)] pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-caption">
               What to do next
             </p>
-            <p className="mt-1 text-sm font-medium text-slate-800">
+            <p className="mt-1 text-sm font-medium text-display">
               {plannedAction}
             </p>
           </div>
         )}
 
         {checkInPlan && (
-          <div className="mt-4 border-t border-slate-100 pt-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <div className="mt-4 border-t border-[var(--border-subtle)] pt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-caption">
               Next check-in
             </p>
-            <p className="mt-1 text-sm text-slate-700">{checkInPlan}</p>
+            <p className="mt-1 text-sm text-body">{checkInPlan}</p>
           </div>
         )}
       </div>
 
       {/* Route list */}
       <div>
-        <h2 className="text-xl font-semibold text-slate-900">
+        <h2 className="text-xl font-semibold text-display">
           Your next-step support plan
         </h2>
-        <p className="mt-1 text-sm text-slate-600">
+        <p className="mt-1 text-sm text-body">
           Concrete support routes you can act on tonight.
         </p>
 
         {/* First step — prominent card */}
         {primaryRoute && (
           <div className="mt-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-caption">
               Your first step
             </p>
             <div
-              className={`mt-2 rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${config.accentBorder}`}
+              className={`mt-2 card-accent p-4 ${config.accentBorder}`}
             >
-              <span className="text-base font-semibold text-slate-900">
+              <span className="text-base font-semibold text-display">
                 {linkifyText(primaryRoute)}
               </span>
             </div>
@@ -202,19 +202,19 @@ export function ActionPlan({
         {/* Secondary routes */}
         {secondaryRoutes.length > 0 && (
           <div className="mt-6">
-            <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+            <p className="text-xs font-medium uppercase tracking-wide text-caption">
               Also consider
             </p>
             <ol className="mt-3 space-y-3">
               {secondaryRoutes.map((step, index) => (
                 <li
                   key={step}
-                  className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+                  className="card flex items-start gap-3 p-4"
                 >
-                  <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
+                  <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-accent-muted text-sm font-semibold text-[var(--accent)]">
                     {index + 2}
                   </span>
-                  <span className="text-slate-800">{linkifyText(step)}</span>
+                  <span className="text-body">{linkifyText(step)}</span>
                 </li>
               ))}
             </ol>

@@ -16,14 +16,14 @@ export function FlowProgress({ step }: FlowProgressProps) {
           key={i}
           className={`rounded-full transition-all duration-300 ${
             i + 1 < step
-              ? "h-2 w-2 bg-slate-400"
+              ? "h-2 w-2 bg-[var(--accent-light)]"
               : i + 1 === step
-                ? "h-2 w-5 bg-[#2d5a4a]"
-                : "h-2 w-2 bg-slate-200"
+                ? "h-2 w-5 bg-[var(--accent)]"
+                : "h-2 w-2 bg-[var(--border)]"
           }`}
         />
       ))}
-      <span className="ml-1.5 text-xs text-slate-500">
+      <span className="ml-1.5 text-xs text-caption">
         Step {step} of {TOTAL_STEPS}
       </span>
     </div>
