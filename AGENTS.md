@@ -30,7 +30,7 @@ See `package.json` scripts:
 
 ### Gotchas
 
-- **Manus API dependency**: Non-crisis flows call `POST /api/support-plan`, which creates and polls Manus tasks. If Manus returns errors, `/plan` shows "Something went wrong". Crisis flows and the crisis API path still work locally.
+- **Manus API dependency**: Non-crisis flows call `POST /api/support-plan`, which creates and polls Manus tasks. The structured output schema in `lib/manus/support-plan.ts` must include `additionalProperties: false` (Manus rejects schemas without it). `lib/manus/client.ts` polls `status_update.agent_status` (nested field) and retries `task.listMessages` on transient `not_found` (~1s after task creation). Crisis flows work without Manus.
 - **No automated E2E tests**: No Playwright/Jest in the repo; verify flows manually in the browser.
 - **Session state**: Support-check answers live in `sessionStorage`; clearing browser storage resets progress.
 - **Crisis modal**: The crisis override overlay is intentionally hard to dismiss — this is a safety feature, not a bug.
