@@ -84,6 +84,13 @@ export function MessagePage() {
     setActionStatus("stuck");
   };
 
+  const handleUndoAction = () => {
+    sessionStorage.removeItem(ACTION_STATUS_KEY);
+    sessionStorage.removeItem(PLANNED_ACTION_KEY);
+    setActionStatus("idle");
+    setStuckReason(null);
+  };
+
   const handleShortCopy = async () => {
     await navigator.clipboard.writeText(SHORT_MESSAGE);
     setShortCopied(true);
@@ -177,15 +184,31 @@ export function MessagePage() {
             <p className="mt-1 text-sm text-green-800">
               University wellbeing will be in touch. You took a real step today.
             </p>
+            <button
+              type="button"
+              onClick={handleUndoAction}
+              className="mt-3 text-xs text-green-700 underline underline-offset-2 hover:text-green-900"
+            >
+              Actually, I haven&apos;t sent it yet
+            </button>
           </div>
         )}
 
         {/* Stuck branching UI */}
         {actionStatus === "stuck" && stuckReason === null && (
           <div className="mt-6 rounded-xl border border-default bg-surface p-5">
-            <p className="font-semibold text-display">
-              That&apos;s okay. What&apos;s getting in the way?
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="font-semibold text-display">
+                That&apos;s okay. What&apos;s getting in the way?
+              </p>
+              <button
+                type="button"
+                onClick={handleUndoAction}
+                className="ml-4 shrink-0 text-xs text-caption underline underline-offset-2 hover:text-body"
+              >
+                Go back
+              </button>
+            </div>
             <div className="mt-4 space-y-2">
               {(
                 [
@@ -210,9 +233,18 @@ export function MessagePage() {
 
         {actionStatus === "stuck" && stuckReason === "too_long" && (
           <div className="mt-6 rounded-xl border border-default bg-surface p-5">
-            <p className="text-sm font-medium text-body">
-              Here&apos;s a shorter version:
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-body">
+                Here&apos;s a shorter version:
+              </p>
+              <button
+                type="button"
+                onClick={() => setStuckReason(null)}
+                className="ml-4 shrink-0 text-xs text-caption underline underline-offset-2 hover:text-body"
+              >
+                Change reason
+              </button>
+            </div>
             <div className="mt-3 rounded-lg border border-[var(--border-subtle)] bg-accent-subtle p-4 text-[15px] leading-relaxed text-body">
               {SHORT_MESSAGE}
             </div>
@@ -229,9 +261,18 @@ export function MessagePage() {
 
         {actionStatus === "stuck" && stuckReason === "privacy" && (
           <div className="mt-6 rounded-xl border border-default bg-surface p-5">
-            <p className="text-sm font-medium text-body">
-              This version shares nothing personal:
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-body">
+                This version shares nothing personal:
+              </p>
+              <button
+                type="button"
+                onClick={() => setStuckReason(null)}
+                className="ml-4 shrink-0 text-xs text-caption underline underline-offset-2 hover:text-body"
+              >
+                Change reason
+              </button>
+            </div>
             <div className="mt-3 rounded-lg border border-[var(--border-subtle)] bg-accent-subtle p-4 text-[15px] leading-relaxed text-body">
               {SHORT_MESSAGE}
             </div>
@@ -248,9 +289,18 @@ export function MessagePage() {
 
         {actionStatus === "stuck" && stuckReason === "dont_know_who" && (
           <div className="mt-6 rounded-xl border border-default bg-surface p-5">
-            <p className="text-sm font-medium text-body">
-              Your clearest first step:
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-body">
+                Your clearest first step:
+              </p>
+              <button
+                type="button"
+                onClick={() => setStuckReason(null)}
+                className="ml-4 shrink-0 text-xs text-caption underline underline-offset-2 hover:text-body"
+              >
+                Change reason
+              </button>
+            </div>
             {primaryRoute && (
               <div className="mt-3 rounded-xl border-l-4 border-l-[var(--accent)] bg-accent-muted p-4">
                 <p className="font-medium text-display">{primaryRoute}</p>
@@ -265,9 +315,18 @@ export function MessagePage() {
 
         {actionStatus === "stuck" && stuckReason === "overwhelmed" && (
           <div className="mt-6 rounded-xl border border-default bg-surface p-5">
-            <p className="text-sm font-medium text-body">
-              One tiny step — that&apos;s all.
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-medium text-body">
+                One tiny step — that&apos;s all.
+              </p>
+              <button
+                type="button"
+                onClick={() => setStuckReason(null)}
+                className="ml-4 shrink-0 text-xs text-caption underline underline-offset-2 hover:text-body"
+              >
+                Change reason
+              </button>
+            </div>
             <p className="mt-2 text-sm text-body">
               Just copy the message and save it for later. You don&apos;t have
               to send it right now.
